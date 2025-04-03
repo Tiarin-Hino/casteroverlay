@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AD Overlay</title>
+    <style>
+        /* Basic CSS - Customize heavily! */
+        body { background-color: rgba(0, 0, 0, 0); margin: 0; padding: 0; color: white; font-family: sans-serif; overflow: hidden;}
+        #overlay-container {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            background-color: rgba(0, 0, 0, 0.6);
+            padding: 10px;
+            border-radius: 5px;
+            display: flex; /* Arrange abilities side-by-side */
+            gap: 5px; /* Spacing between ability divs */
+        }
+        .ability-slot {
+            width: 64px; /* Adjust size as needed */
+            height: 64px;
+            border: 1px solid #555;
+            position: relative;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end; /* Text at bottom */
+        }
+        .ability-icon {
+            width: 100%;
+            height: 100%;
+            object-fit: contain; /* Or cover */
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 1;
+        }
+        .ability-cooldown {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 24px;
+            font-weight: bold;
+            color: yellow;
+            text-shadow: 1px 1px 2px black;
+            z-index: 3;
+             display: none; /* Hidden by default */
+        }
+         .ability-level {
+            position: absolute;
+            bottom: 2px;
+            right: 2px;
+            font-size: 12px;
+            background-color: rgba(0,0,0,0.8);
+            padding: 1px 3px;
+            border-radius: 3px;
+             z-index: 2;
+             display: none; /* Hidden by default */
+        }
+        /* Add styles for when cooldown is active, etc. */
+    </style>
+</head>
+<body>
+    <div id="overlay-container">
+        <div id="ability-0" class="ability-slot"></div>
+        <div id="ability-1" class="ability-slot"></div>
+        <div id="ability-2" class="ability-slot"></div>
+        <div id="ability-3" class="ability-slot"></div>
+        <div id="ability-4" class="ability-slot"></div> </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io(); // Connects to the server serving this page
+
+        socket.on('connect', () => {
+            console.log('[OVERLAY] Connected to server via WebSocket');
+        });
+
+        socket.on('gsi_update', (data) => {
+            // console.log('[OVERLAY] Received data:', data);
+            updateOverlay(data);
+        });
+
+        socket.on('disconnect', () => {
+            console.log('[OVERLAY] Disconnected from server');
+        });
+
+        function updateOverlay(data) {
+            if (!data || !data.streamerAbilities) {
+                // console.log('[OVERLAY] No ability data received.');
+                // Optionally clear the overlay here
+                return;
+            }
+
+            // --- Update the HTML based on received data ---
+            const abilities = data.streamerAbilities;
+            for (let i = 0; i < 5; i++) { // Assuming max 4 abilities + 1 ult
+                const slotElement = document.getElementById(`ability-${i}`);
+                if (!slotElement) continue;
+
+                const ability = abilities[i]; // Get the corresponding ability
+
+                if (ability) {
+                    // Basic update - needs improvement!
+                    slotElement.innerHTML = `
+                        <img class="ability-icon" src="<span class="math-inline">\{ability\.icon\}" alt\="</span>{ability.name}" onerror="this.style.display='none'"> <div class="ability-level" style="display: <span class="math-inline">\{ability\.level \> 0 ? 'block' \: 'none'\}"\></span>{ability.level}</div>
+                        <div class="ability-cooldown" style="display: <span class="math-inline">\{ability\.cooldown \> 0 ? 'block' \: 'none'\}"\></span>{Math.ceil(ability.cooldown)}</div>
+                    `;
+                } else {
+                    slotElement.innerHTML = ''; // Clear slot if no ability data
+                }
+            }
+        }
+
+         // Initial clear or placeholder state
+         updateOverlay(null);
+
+    </script>
+</body>
+</html>
