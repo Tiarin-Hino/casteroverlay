@@ -1,14 +1,12 @@
 {
-  "name": "dota2-simple-overlay",
+  "name": "dota2-gsi-screenshotter",
   "version": "1.0.0",
-  "description": "A simple Dota 2 overlay using dota2-gsi",
+  "description": "A simple Node.js script using Dota 2 GSI to trigger screenshots at Strategy Time.",
   "main": "server.js",
   "type": "module",
   "scripts": {
     "start": "node server.js"
   },
-  "dependencies": {
-    "express": "^5.1.0",
-    "socket.io": "^4.8.1"
-  }
+  "author": "",
+  "license": "ISC"
 }

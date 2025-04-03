@@ -24,7 +24,7 @@ pid.[0-9]*.log.[0-9]*
 .env.*
 !.env.example
 
-# Build output directories (optional, good practice if you ever add a build step)
+# Build output directories (optional)
 /dist
 /build
 /out
@@ -50,7 +50,6 @@ Thumbs.db
 *.sublime-workspace
 *.sublime-project
 .idea/
-# Add other editor ignores if needed (.atom/, etc.)
 
 # Test output (if you add tests later)
 /coverage
